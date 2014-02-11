@@ -77,8 +77,18 @@ signi.2
 # beta_hat_3: 48    beta_hat_4: 1000   beta_hat_5: 47
 
 ## 7. Re-runing that code in parallel, and estimaing how much time is saved. 
+library('doMC')
+library('multicore')
+library('foreach')
+library(plyr)
+registerDoMC(cores=8)
 
-
+system.time(t.beta.hat <- sapply(1:1000, function(i){summary(lm(Y[,i]~data[, ,i]))$coefficient[,3]}))
+ user  system elapsed 
+  1.297   0.004   1.302 
+system.time(t.beta.hat <- laply(1:1000, function(i){summary(lm(Y[,i]~data[, ,i]))$coefficient[,3]}, .parallel=TRUE))
+ user  system elapsed 
+  2.128   0.310   0.836 
 ###. Calculating fit statistics
 ## 1. Model building and making predictions. 
 
